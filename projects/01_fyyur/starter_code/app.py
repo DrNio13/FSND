@@ -39,12 +39,8 @@ print(db.session)
 class Show(db.Model):
     __tablename__ = 'Show'
 
-    venue_id = db.Column(
-        db.Integer,
-        db.ForeignKey('Venue.id'), primary_key=True)
-    artist_id = db.Column(
-        db.Integer,
-        db.ForeignKey('Artist.id'), primary_key=True)
+    venue_id = db.Column(db.Integer,db.ForeignKey('Venue.id'), primary_key=True)
+    artist_id = db.Column(db.Integer,db.ForeignKey('Artist.id'), primary_key=True)
     start_time = db.Column(db.DateTime, nullable=False)
 
 
@@ -63,11 +59,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120), nullable=False)
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
-    artists = db.relationship("Artist",
-                              secondary=Show,
-                              back_populates="venues",
-                              collection_class=list,
-                              cascade="all, delete-orphan")
+    artists = db.relationship("Artist",secondary=Show,back_populates="venues",collection_class=list,cascade="all, delete-orphan")
 
     # (DONE) TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -87,9 +79,7 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
-    venues = db.relationship('Venue',
-                             secondary=Show,
-                             back_populates="artists")
+    venues = db.relationship('Venue',secondary=Show,back_populates="artists")
 
     # (DONE) TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -284,13 +274,8 @@ def create_venue_submission():
         print('-----------DEBUG--------------')
         print('------------------------------')
 
-        venue = Venue(name=name,
-                      city=city,
-                      state=state,
-                      address=address,
-                      phone=phone,
-                      genres=genres,
-                      facebook_link=facebook_link)
+        print(name)
+        venue=Venue(name=name,city=city,state=state,address=address,phone=phone,genres=genres,facebook_link=facebook_link)
 
         print('-----------DEBUG 2--------------')
         print('------------------------------')
@@ -298,6 +283,9 @@ def create_venue_submission():
         db.session.add(venue)
         db.session.commit()
     except:
+        error = True
+        print('-----------DEBUG 3--------------')
+        print('------------------------------')
         db.session.rollback()
     finally:
         db.session.close()
