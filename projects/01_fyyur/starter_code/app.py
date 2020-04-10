@@ -25,6 +25,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 print('-----connected to db------')
 print(db)
+print(db.session)
 
 # (DONE) TODO: connect to a local postgresql database
 
@@ -128,6 +129,7 @@ def index():
 def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
+
     data = [{
         "city": "San Francisco",
         "state": "CA",
@@ -149,7 +151,7 @@ def venues():
             "num_upcoming_shows": 0,
         }]
     }]
-    return render_template('pages/venues.html', areas=data)
+    return render_template('pages/venues.html', areas=venues)
 
 
 @app.route('/venues/search', methods=['POST'])
@@ -268,11 +270,43 @@ def create_venue_submission():
     # TODO: insert form data as a new Venue record in the db, instead
     # TODO: modify data to be the data object returned from db insertion
 
-    # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    response = {}
+    error = False
+    try:
+        name = request.form.get("name")
+        city = request.form.get("city")
+        state = request.form.get("state")
+        address = request.form.get("address")
+        phone = request.form.get("phone")
+        genres = request.form.get("genres")
+        facebook_link = request.form.get("facebook_link")
+
+        print('-----------DEBUG--------------')
+        print('------------------------------')
+
+        venue = Venue(name=name,
+                      city=city,
+                      state=state,
+                      address=address,
+                      phone=phone,
+                      genres=genres,
+                      facebook_link=facebook_link)
+
+        print('-----------DEBUG 2--------------')
+        print('------------------------------')
+
+        db.session.add(venue)
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+        if error == False:
+            flash('Venue ' + request.form['name'] +
+                  ' was successfully listed!')
+        else:
+            flash('An error occurred. Venue ' + request.form['name'] +
+                  ' could not be listed.')
     return render_template('pages/home.html')
 
 
