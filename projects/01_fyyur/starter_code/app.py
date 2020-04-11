@@ -49,7 +49,7 @@ class Venue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    genres = db.Column(db.ARRAY(db.String), nullable=False)
+    genres = db.Column(db.String(120), nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
     address = db.Column(db.String(120), nullable=False)
@@ -75,7 +75,6 @@ class Artist(db.Model):
     genres = db.Column(db.String(120), nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120), nullable=False)
-    genres = db.Column(db.ARRAY(db.String))
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
@@ -272,10 +271,12 @@ def create_venue_submission():
         facebook_link = request.form.get("facebook_link")
 
         print('-----------DEBUG--------------')
+        george = User.query.filter_by(name='george').first()
+        print(george)
         print('------------------------------')
 
         print(name)
-        venue=Venue(name=name,city=city,state=state,address=address,phone=phone,genres=genres,facebook_link=facebook_link)
+        venue=Venue(name,city,state,address,phone,genres,facebook_link)
 
         print('-----------DEBUG 2--------------')
         print('------------------------------')
