@@ -276,10 +276,11 @@ def create_venue_submission():
 
         db.session.add(venue)
         db.session.commit()
-    except:
+    except Exception as e:
         error = True
         print('-----------DEBUG 3--------------')
         print('------------------------------')
+        flash(f'An error occurred. Show could not be listed. Error: {e}')
         db.session.rollback()
     finally:
         db.session.close()
