@@ -27,8 +27,6 @@ print('-----connected to db------')
 print(db)
 print(db.session)
 
-# (DONE) TODO: connect to a local postgresql database
-
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
@@ -39,8 +37,10 @@ print(db.session)
 class Show(db.Model):
     __tablename__ = 'Show'
 
-    venue_id = db.Column(db.Integer,db.ForeignKey('Venue.id'), primary_key=True)
-    artist_id = db.Column(db.Integer,db.ForeignKey('Artist.id'), primary_key=True)
+    venue_id = db.Column(db.Integer, db.ForeignKey(
+        'Venue.id'), primary_key=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey(
+        'Artist.id'), primary_key=True)
     start_time = db.Column(db.DateTime, nullable=False)
 
 
@@ -59,9 +59,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120), nullable=False)
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
-    artists = db.relationship("Artist",secondary=Show,back_populates="venues",collection_class=list,cascade="all, delete-orphan")
-
-    # (DONE) TODO: implement any missing fields, as a database migration using Flask-Migrate
+    artists = db.relationship("Artist", secondary="Show", backref="venues")
 
 
 class Artist(db.Model):
@@ -78,11 +76,8 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
-    venues = db.relationship('Venue',secondary=Show,back_populates="artists")
-
-    # (DONE) TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-# (DONE) TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+    venues = db.relationship('Venue', secondary='Show',
+                             backref="artists", collection_class=list, cascade="all, delete-orphan")
 
 
 #----------------------------------------------------------------------------#
@@ -276,7 +271,7 @@ def create_venue_submission():
         print('------------------------------')
 
         print(name)
-        venue=Venue(name,city,state,address,phone,genres,facebook_link)
+        venue = Venue(name, city, state, address, phone, genres, facebook_link)
 
         print('-----------DEBUG 2--------------')
         print('------------------------------')
