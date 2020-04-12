@@ -266,12 +266,10 @@ def create_venue_submission():
         facebook_link = request.form.get("facebook_link")
 
         print('-----------DEBUG--------------')
-        george = User.query.filter_by(name='george').first()
-        print(george)
-        print('------------------------------')
+        print('-------------------------')
 
-        print(name)
-        venue = Venue(name, city, state, address, phone, genres, facebook_link)
+        venue = Venue(name=name, city=city, state=state, address=address,
+                      phone=phone, genres=genres, facebook_link=facebook_link)
 
         print('-----------DEBUG 2--------------')
         print('------------------------------')
