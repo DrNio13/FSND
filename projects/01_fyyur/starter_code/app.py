@@ -82,12 +82,9 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
-<<<<<<< HEAD
-=======
 
     def __repr__(self):
         return 'Artist(%s, %s)' % (self.id, self.name)
->>>>>>> 5c95d4f5364af43dceef9929b3079a0eb14b39c5
 
 
 #----------------------------------------------------------------------------#
