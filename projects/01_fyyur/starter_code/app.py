@@ -76,8 +76,6 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
-    venues = db.relationship('Venue', secondary='Show',
-                             backref="artists", collection_class=list, cascade="all, delete-orphan")
 
 
 #----------------------------------------------------------------------------#
