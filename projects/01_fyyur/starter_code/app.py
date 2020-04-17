@@ -167,7 +167,8 @@ def show_venue(venue_id):
     # shows the venue page with the given venue_id
     # DRAFT - TODO: replace with real venue data from the venues table, using venue_id
     #  TODO HERE
-    venue = db.session.query(Venue).filter_by(id=venue_id)
+    venue = db.session.query(Venue).filter_by(id=venue_id).first()
+    now = datetime.now()
 
     data1 = {
         "id": 1,
