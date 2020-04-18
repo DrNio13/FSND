@@ -6,6 +6,7 @@
 		</h1>
 		<p class="subtitle">
 			ID: {{ venue.id }}
+			<button id='delete-venue' data-id={{venue.id}}>Delete venue</button>
 		</p>
 		<div class="genres">
 			{% for genre in venue.genres %}
@@ -80,4 +81,32 @@
 	</div>
 </section>
 
-{% endblock %}
+<script>
+	const deleteVenueHandler = () => {
+		const button = document.getElementById('delete-venue')
+		const venueId = button.getAttribute('data-id')
+
+		if (!venueId || venueId === 'None') return
+
+		try {
+			fetch(`/venues/${venueId}`, {
+				method: "DELETE"
+			})
+				.then(res => res.json())
+				.then(res => {
+					if (res.success === true) {
+						window.alert('Venue was successfully deleted')
+						window.location.href = '/'
+						return
+					}
+					window.alert(`An error occurred when trying to delete the venue.`)
+				})
+		} catch (e) {
+			window.alert(`An error occurred when trying to delete the venue.`)
+		}
+	}
+
+	const button = document.getElementById('delete-venue')
+	button.addEventListener('click', deleteVenueHandler, false)
+
+</script> {% endblock %}
