@@ -13,6 +13,27 @@ class ShowForm(Form):
 
 
 class VenueForm(Form):
+    genresChoices = [
+        ("Alternative", "Alternative"),
+        ("Blues", "Blues"),
+        ("Classical", "Classical"),
+        ("Country", "Country"),
+        ("Electronic", "Electronic"),
+        ("Folk", "Folk"),
+        ("Funk", "Funk"),
+        ("Hip-Hop", "Hip-Hop"),
+        ("Heavy Metal", "Heavy Metal"),
+        ("Instrumental", "Instrumental"),
+        ("Jazz", "Jazz"),
+        ("Musical Theatre", "Musical Theatre"),
+        ("Pop", "Pop"),
+        ("Punk", "Punk"),
+        ("R&B", "R&B"),
+        ("Reggae", "Reggae"),
+        ("Rock n Roll", "Rock n Roll"),
+        ("Soul", "Soul"),
+        ("Other", "Other"),
+    ]
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
     state = SelectField(
@@ -76,35 +97,35 @@ class VenueForm(Form):
     phone = StringField("phone")
     image_link = StringField("image_link")
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         "genres",
-        validators=[DataRequired()],
-        choices=[
-            ("Alternative", "Alternative"),
-            ("Blues", "Blues"),
-            ("Classical", "Classical"),
-            ("Country", "Country"),
-            ("Electronic", "Electronic"),
-            ("Folk", "Folk"),
-            ("Funk", "Funk"),
-            ("Hip-Hop", "Hip-Hop"),
-            ("Heavy Metal", "Heavy Metal"),
-            ("Instrumental", "Instrumental"),
-            ("Jazz", "Jazz"),
-            ("Musical Theatre", "Musical Theatre"),
-            ("Pop", "Pop"),
-            ("Punk", "Punk"),
-            ("R&B", "R&B"),
-            ("Reggae", "Reggae"),
-            ("Rock n Roll", "Rock n Roll"),
-            ("Soul", "Soul"),
-            ("Other", "Other"),
-        ],
+        validators=[DataRequired(), AnyOf(genresChoices)],
+        choices=genresChoices,
     )
     facebook_link = StringField("facebook_link", validators=[URL()])
 
 
 class ArtistForm(Form):
+    genresChoices = [
+        ("Alternative", "Alternative"),
+        ("Blues", "Blues"),
+        ("Classical", "Classical"),
+        ("Country", "Country"),
+        ("Electronic", "Electronic"),
+        ("Folk", "Folk"),
+        ("Funk", "Funk"),
+        ("Hip-Hop", "Hip-Hop"),
+        ("Heavy Metal", "Heavy Metal"),
+        ("Instrumental", "Instrumental"),
+        ("Jazz", "Jazz"),
+        ("Musical Theatre", "Musical Theatre"),
+        ("Pop", "Pop"),
+        ("Punk", "Punk"),
+        ("R&B", "R&B"),
+        ("Reggae", "Reggae"),
+        ("Rock n Roll", "Rock n Roll"),
+        ("Soul", "Soul"),
+        ("Other", "Other"),
+    ]
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
     state = SelectField(
@@ -164,36 +185,12 @@ class ArtistForm(Form):
             ("WY", "WY"),
         ],
     )
-    phone = StringField(
-        # TODO implement validation logic for state
-        "phone"
-    )
+    phone = StringField("phone")
     image_link = StringField("image_link")
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         "genres",
-        validators=[DataRequired()],
-        choices=[
-            ("Alternative", "Alternative"),
-            ("Blues", "Blues"),
-            ("Classical", "Classical"),
-            ("Country", "Country"),
-            ("Electronic", "Electronic"),
-            ("Folk", "Folk"),
-            ("Funk", "Funk"),
-            ("Hip-Hop", "Hip-Hop"),
-            ("Heavy Metal", "Heavy Metal"),
-            ("Instrumental", "Instrumental"),
-            ("Jazz", "Jazz"),
-            ("Musical Theatre", "Musical Theatre"),
-            ("Pop", "Pop"),
-            ("Punk", "Punk"),
-            ("R&B", "R&B"),
-            ("Reggae", "Reggae"),
-            ("Rock n Roll", "Rock n Roll"),
-            ("Soul", "Soul"),
-            ("Other", "Other"),
-        ],
+        validators=[DataRequired(), AnyOf(genresChoices)],
+        choices=genresChoices,
     )
     facebook_link = StringField(
         # TODO implement enum restriction
@@ -203,3 +200,5 @@ class ArtistForm(Form):
 
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+# image link for artists and venues
+# seeking description and boolean based on the github profile
