@@ -133,33 +133,37 @@ def index():
 
 @app.route("/venues")
 def venues():
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
-
-    # self join
+    now = datetime.utcnow()
     venues = db.session.query(Venue).all()
-    data = [
-        {
-            "city": "San Francisco",
-            "state": "CA",
-            "venues": [
-                {"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0,},
+    city_states = [(venue.city, venue.state) for venue in venues]
+    data = list()
+    city = []
+    for cs in city_states:
+        # avoid duplicates cities
+        if cs[0] in city:
+            break
+        city.append(cs[0])
+        venueResults = Venue.query.filter(Venue.city == cs[0]).all()
+        upcoming_shows = (
+            Venue.query.filter(Venue.city == cs[0])
+            .join(Show, Show.venue_id == Venue.id)
+            .filter(Show.start_time > now)
+            .all()
+        )
+        venuesResponse = list()
+        for venue in venueResults:
+            venuesResponse.append(
                 {
-                    "id": 3,
-                    "name": "Park Square Live Music & Coffee",
-                    "num_upcoming_shows": 1,
-                },
-            ],
-        },
-        {
-            "city": "New York",
-            "state": "NY",
-            "venues": [
-                {"id": 2, "name": "The Dueling Pianos Bar", "num_upcoming_shows": 0,}
-            ],
-        },
-    ]
-    return render_template("pages/venues.html", areas=venues)
+                    "venues": {
+                        "id": venue.id,
+                        "name": venue.name,
+                        "num_upcoming_shows": len(upcoming_shows),
+                    }
+                }
+            )
+        data.append({"city": cs[0], "state": cs[1], "venues": venueResults})
+
+    return render_template("pages/venues.html", areas=data)
 
 
 @app.route("/venues/search", methods=["POST"])
@@ -371,7 +375,6 @@ def create_artist_form():
 
 @app.route("/artists/create", methods=["POST"])
 def create_artist_submission():
-
     response = {}
     error = False
     try:
@@ -402,12 +405,6 @@ def create_artist_submission():
         if error == False:
             flash("Artist " + response["name"] + " was successfully listed!")
 
-    # called upon submitting the new artist listing form
-
-    # on successful db insert, flash success
-
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
     return render_template("pages/home.html")
 
 
@@ -417,19 +414,19 @@ def create_artist_submission():
 
 @app.route("/shows")
 def shows():
-    # displays list of shows at /shows
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
-
     sql = text(
-        'select "Venue".id as venue_id, "Venue".name as venue_name, "Artist".id as artist_id, "Artist".name as artist_name, "Artist".image_link as artist_image_link, "Show".start_time as start_time from "Venue" inner join "Show" on "Venue".id="Show".venue_id inner join "Artist" on "Artist".id="Show".artist_id'
+        """select "Venue".id as venue_id, "Venue".name as venue_name, 
+        "Artist".id as artist_id, "Artist".name as artist_name, 
+        "Artist".image_link as artist_image_link, 
+        "Show".start_time as start_time from "Venue" inner join "Show" on "Venue".id="Show".venue_id 
+        inner join "Artist" on "Artist".id="Show".artist_id"""
     )
     results = db.engine.execute(sql)
 
     data = list()
     for result in results:
         data.append(result)
-    print(data)
+    
     return render_template("pages/shows.html", shows=data)
 
 
