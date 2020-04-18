@@ -153,7 +153,6 @@ def search_venues():
     searchTerm = request.form.get('search_term', '').lower()
     search = "%{}%".format(searchTerm)
     data = Venue.query.filter(Venue.name.ilike(search)).all()
-    print(data)
     count = len(data)
     response = {
         "count": count,
@@ -174,7 +173,7 @@ def show_venue(venue_id):
     venue.upcoming_shows_count = len(venue.upcoming_shows)
     venue.past_shows = db.session.query(Show).\
         join(Venue, Show.venue_id == Venue.id).\
-        filter(Show.venue_id == venue_id, Show.start_time > now).\
+        filter(Show.venue_id == venue_id, Show.start_time < now).\
         all()
     venue.past_shows_count = len(venue.past_shows)
 
@@ -267,12 +266,10 @@ def show_artist(artist_id):
     artist.past_shows = db.session.query(Show).\
         join(Artist, Show.artist_id == Artist.id).\
         filter(
-        Show.artist_id == artist_id, Show.start_time > now).\
+        Show.artist_id == artist_id, Show.start_time < now).\
         all()
     if len(artist.past_shows):
         artist.past_shows_count = len(artist.past_shows)
-
-    print(artist)
 
     return render_template('pages/show_artist.html', artist=artist)
 
@@ -410,7 +407,6 @@ def create_show_submission():
 
         show = Show(artist_id=artist_id, venue_id=venue_id,
                     start_time=start_time)
-
         db.session.add(show)
         db.session.commit()
     except Exception as e:
