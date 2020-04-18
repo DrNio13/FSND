@@ -6,13 +6,16 @@
 		</h1>
 		<p class="subtitle">
 			ID: {{ venue.id }}
-			<button id='delete-venue' data-id={{venue.id}}>Delete venue</button>
+			<a style="margin-left: 10px;" href="/venues/{{venue.id}}/edit">Edit venue</a>
 		</p>
 		<div class="genres">
 			{% for genre in venue.genres %}
 			<span class="genre">{{ genre }}</span>
 			{% endfor %}
 		</div>
+
+		<button class="btn btn-danger" style="margin-bottom: 24px" id='delete-venue' data-id={{venue.id}}>Delete venue</button>
+
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
 		</p>

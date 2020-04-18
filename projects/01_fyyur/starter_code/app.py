@@ -3,8 +3,7 @@
 # ----------------------------------------------------------------------------#
 
 from sqlalchemy.dialects.postgresql import ARRAY
-import json
-from sqlalchemy import func, text
+from sqlalchemy import func, text, update
 import dateutil.parser
 import babel
 from flask import (
@@ -40,8 +39,6 @@ print("-----connected to db------")
 # ----------------------------------------------------------------------------#
 # Models.
 # ----------------------------------------------------------------------------#
-
-# associates Venue - Artist many to many
 
 
 class Show(db.Model):
@@ -173,6 +170,7 @@ def search_venues():
     data = Venue.query.filter(Venue.name.ilike(search)).all()
     count = len(data)
     response = {"count": count, "data": data}
+
     return render_template(
         "pages/search_venues.html",
         results=response,
@@ -263,11 +261,11 @@ def delete_venue(venue_id):
     except:
         error = True
         db.session.rollback()
-        return jsonify({"success": False})
     finally:
         db.session.close()
         if error == False:
             return jsonify({"success": True})
+        return jsonify({"success": False})
 
 
 #  Artists
@@ -286,6 +284,7 @@ def search_artists():
     data = Artist.query.filter(Artist.name.ilike(search)).all()
     count = len(data)
     response = {"count": count, "data": data}
+
     return render_template(
         "pages/search_artists.html",
         results=response,
@@ -344,8 +343,36 @@ def edit_artist(artist_id):
 
 @app.route("/artists/<int:artist_id>/edit", methods=["POST"])
 def edit_artist_submission(artist_id):
-    # TODO: take values from the form submitted, and update existing
-    # artist record with ID <artist_id> using the new attributes
+    error = False
+    try:
+        name = request.form.get("name")
+        city = request.form.get("city")
+        state = request.form.get("state")
+        phone = request.form.get("phone")
+        genres = request.form.get("genres")
+        facebook_link = request.form.get("facebook_link")
+
+        sql = (
+            update(Artist)
+            .where(Artist.id == artist_id)
+            .values(
+                name=name,
+                city=city,
+                state=state,
+                phone=phone,
+                genres=genres,
+                facebook_link=facebook_link,
+            )
+        )
+        db.engine.execute(sql)
+    except:
+        error = True
+        flash("Error while updating artist " + request.form.get("name"))
+        db.session.rollback()
+    finally:
+        db.session.close()
+        if error == False:
+            flash("Artist was updated " + request.form.get("name") + " successfully!")
 
     return redirect(url_for("show_artist", artist_id=artist_id))
 
@@ -360,8 +387,36 @@ def edit_venue(venue_id):
 
 @app.route("/venues/<int:venue_id>/edit", methods=["POST"])
 def edit_venue_submission(venue_id):
-    # TODO: take values from the form submitted, and update existing
-    # venue record with ID <venue_id> using the new attributes
+    error = False
+    try:
+        name = request.form.get("name")
+        city = request.form.get("city")
+        state = request.form.get("state")
+        phone = request.form.get("phone")
+        genres = request.form.get("genres")
+        facebook_link = request.form.get("facebook_link")
+
+        sql = (
+            update(Venue)
+            .where(Venue.id == venue_id)
+            .values(
+                name=name,
+                city=city,
+                state=state,
+                phone=phone,
+                genres=genres,
+                facebook_link=facebook_link,
+            )
+        )
+        db.engine.execute(sql)
+    except:
+        error = True
+        flash("Error while updating venue " + request.form.get("name"))
+        db.session.rollback()
+    finally:
+        db.session.close()
+        if error == False:
+            flash("Venue was updated " + request.form.get("name") + " successfully!")
     return redirect(url_for("show_venue", venue_id=venue_id))
 
 
@@ -384,7 +439,6 @@ def create_artist_submission():
         phone = request.form.get("phone")
         genres = request.form.get("genres")
         facebook_link = request.form.get("facebook_link")
-        print(genres)
         artist = Artist(
             name=name,
             city=city,
@@ -396,7 +450,7 @@ def create_artist_submission():
         response["name"] = artist.name
         db.session.add(artist)
         db.session.commit()
-    except Exception as e:
+    except:
         error = True
         flash("An error occurred. Artist " + name + " could not be listed.")
         db.session.rollback()
@@ -426,7 +480,7 @@ def shows():
     data = list()
     for result in results:
         data.append(result)
-    
+
     return render_template("pages/shows.html", shows=data)
 
 
@@ -448,9 +502,9 @@ def create_show_submission():
         show = Show(artist_id=artist_id, venue_id=venue_id, start_time=start_time)
         db.session.add(show)
         db.session.commit()
-    except Exception as e:
+    except:
         error = True
-        flash("An error occurred. Show could not be listed." + {e})
+        flash("An error occurred. Show could not be listed.")
         db.session.rollback()
     finally:
         db.session.close()
