@@ -130,35 +130,19 @@ def index():
 
 @app.route("/venues")
 def venues():
-    now = datetime.utcnow()
-    venues = db.session.query(Venue).all()
-    city_states = [(venue.city, venue.state) for venue in venues]
-    data = list()
-    city = []
-    for cs in city_states:
-        # avoid duplicates cities
-        if cs[0] in city:
-            break
-        city.append(cs[0])
-        venueResults = Venue.query.filter(Venue.city == cs[0]).all()
-        upcoming_shows = (
-            Venue.query.filter(Venue.city == cs[0])
-            .join(Show, Show.venue_id == Venue.id)
-            .filter(Show.start_time > now)
+    all_areas = (
+        Venue.query.with_entities(Venue.city, Venue.state)
+        .group_by(Venue.city, Venue.state)
+        .all()
+    )
+    data = []
+    for area in all_areas:
+        venues_in_city = (
+            Venue.query.filter(Venue.city == area[0])
+            .filter(Venue.state == area[1])
             .all()
         )
-        venuesResponse = list()
-        for venue in venueResults:
-            venuesResponse.append(
-                {
-                    "venues": {
-                        "id": venue.id,
-                        "name": venue.name,
-                        "num_upcoming_shows": len(upcoming_shows),
-                    }
-                }
-            )
-        data.append({"city": cs[0], "state": cs[1], "venues": venueResults})
+        data.append({"city": area.city, "state": area.state, "venues": venues_in_city})
 
     return render_template("pages/venues.html", areas=data)
 
@@ -282,6 +266,7 @@ def artists():
     artists = Artist.query.all()
 
     return render_template("pages/artists.html", artists=artists)
+
 
 # Find artist by name, city, state
 @app.route("/artists/search", methods=["POST"])
