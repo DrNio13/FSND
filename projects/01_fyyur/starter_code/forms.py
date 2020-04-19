@@ -193,12 +193,7 @@ class ArtistForm(Form):
         choices=genresChoices,
     )
     facebook_link = StringField(
-        # TODO implement enum restriction
         "facebook_link",
         validators=[URL()],
     )
 
-
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
-# image link for artists and venues
-# seeking description and boolean based on the github profile

@@ -213,7 +213,7 @@ def create_venue_submission():
         address = request.form.get("address")
         phone = request.form.get("phone")
         facebook_link = request.form.get("facebook_link")
-        genres = request.form.get("genres")
+        genres = request.form.getlist("genres")
         venue = Venue(
             name=name,
             city=city,
@@ -311,6 +311,8 @@ def show_artist(artist_id):
     if len(artist.past_shows):
         artist.past_shows_count = len(artist.past_shows)
 
+    print(artist.genres)
+
     return render_template("pages/show_artist.html", artist=artist)
 
 
@@ -347,7 +349,7 @@ def edit_artist_submission(artist_id):
         city = request.form.get("city")
         state = request.form.get("state")
         phone = request.form.get("phone")
-        genres = request.form.get("genres")
+        genres = request.form.getlist("genres")
         facebook_link = request.form.get("facebook_link")
 
         sql = (
@@ -391,7 +393,7 @@ def edit_venue_submission(venue_id):
         city = request.form.get("city")
         state = request.form.get("state")
         phone = request.form.get("phone")
-        genres = request.form.get("genres")
+        genres = request.form.getlist("genres")
         facebook_link = request.form.get("facebook_link")
 
         sql = (
@@ -435,7 +437,7 @@ def create_artist_submission():
         city = request.form.get("city")
         state = request.form.get("state")
         phone = request.form.get("phone")
-        genres = request.form.get("genres")
+        genres = request.form.getlist("genres")
         facebook_link = request.form.get("facebook_link")
         artist = Artist(
             name=name,

@@ -9,9 +9,8 @@
 			<a style="margin-left: 10px;" href="/venues/{{venue.id}}/edit">Edit venue</a>
 		</p>
 		<div class="genres">
-			{% for genre in venue.genres %}
-			<span class="genre">{{ genre }}</span>
-			{% endfor %}
+			{% for genre in venue.genres %} {% if genre != '{' and genre != '}' %}
+			<span class="genre">{{ genre }}</span> {%endif%} {% endfor %}
 		</div>
 
 		<button class="btn btn-danger" style="margin-bottom: 24px" id='delete-venue' data-id={{venue.id}}>Delete venue</button>
