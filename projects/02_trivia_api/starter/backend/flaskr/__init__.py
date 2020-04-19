@@ -13,33 +13,61 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app)
+    CORS(app, resources=r'/api/*')
 
-    # TODO delete sample route before submitting
     @app.route("/")
-    def helloWorld():
-        return "Hello, cross-origin-world!"
+    def index():
+        return jsonify({"status": True})
 
-    '''
-  @TODO: Use the after_request decorator to set Access-Control-Allow
-  '''
+    @app.after_request
+    def after_equest(response):
+        response.headers.add("Access-Control-Allow-Headers",
+                             "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods",
+                             "GET, POST, DELETE, PUT, PATCH, OPTIONS")
+        return response
 
-    '''
-  @TODO:
-  Create an endpoint to handle GET requests
-  for all available categories.
-  '''
     @app.route("/categories")
-    def getCategories():
+    def get_categories():
         categories = Category.query.all()
-        return jsonify(categories)
+        formatted_categories = [category.format() for category in categories]
+
+        return jsonify(formatted_categories)
+
+    @app.route("/questions")
+    def get_questions():
+        page = request.args.get("page", 1, type=int)
+        start = (page - 1) * 10
+        end = start + 10
+        questions = Question.query.all()
+        formatted_questions = [question.format() for question in questions]
+        categories = set()
+        for question in questions:
+            category_type = get_category_type(question.category)
+            categories.add(category_type)
+
+        return jsonify({
+            "questions": formatted_questions[start:end],
+            "totalQuestions": len(formatted_questions),
+            "categories": list(categories)
+        })
+
+    def get_category_type(id):
+        categories = Category.query.all()
+        category_found = ''
+
+        for category in categories:
+            if (category.id == id):
+                category_found = category.type
+        return category_found
 
     '''
   @TODO: 
   Create an endpoint to handle GET requests for questions, 
   including pagination (every 10 questions). 
   This endpoint should return a list of questions, 
-  number of total questions, current category, categories. 
+  number of total questions, current category, categories.
+     
 
   TEST: At this point, when you start the application
   you should see questions and categories generated,
