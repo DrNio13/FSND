@@ -57,7 +57,7 @@ class Venue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    genres = db.Column(db.String, nullable=False)
+    genres = db.Column(ARRAY(db.String), nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
     address = db.Column(db.String(120), nullable=False)
@@ -212,8 +212,8 @@ def create_venue_submission():
         state = request.form.get("state")
         address = request.form.get("address")
         phone = request.form.get("phone")
-        genres = request.form.get("genres")
         facebook_link = request.form.get("facebook_link")
+        genres = request.form.get("genres")
         venue = Venue(
             name=name,
             city=city,
