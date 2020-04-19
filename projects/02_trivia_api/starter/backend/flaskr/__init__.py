@@ -4,13 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
-from models import setup_db, Question, Category
+from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
 
 def create_app(test_config=None):
-    # create and configure the app
     app = Flask(__name__)
     setup_db(app)
     CORS(app, resources=r'/api/*')
@@ -32,7 +31,9 @@ def create_app(test_config=None):
         categories = Category.query.all()
         formatted_categories = [category.format() for category in categories]
 
-        return jsonify(formatted_categories)
+        return jsonify({
+            "categories": formatted_categories
+        })
 
     @app.route("/questions")
     def get_questions():
@@ -48,8 +49,9 @@ def create_app(test_config=None):
 
         return jsonify({
             "questions": formatted_questions[start:end],
-            "totalQuestions": len(formatted_questions),
-            "categories": list(categories)
+            "total_questions": len(formatted_questions),
+            "categories": list(categories),
+            # "current_category": "history" TODO fix it
         })
 
     def get_category_type(id):
@@ -61,27 +63,53 @@ def create_app(test_config=None):
                 category_found = category.type
         return category_found
 
-    '''
-  @TODO: 
-  Create an endpoint to handle GET requests for questions, 
-  including pagination (every 10 questions). 
-  This endpoint should return a list of questions, 
-  number of total questions, current category, categories.
-     
+    @app.route('/questions/<int:id>', methods=["DELETE"])
+    def delete_question_by_id(id):
+        try:
+            Question.query.filter(Question.id == id).delete()
+            db.session.commit()
 
-  TEST: At this point, when you start the application
-  you should see questions and categories generated,
-  ten questions per page and pagination at the bottom of the screen for three pages.
-  Clicking on the page numbers should update the questions. 
-  '''
+            return jsonify({
+                "success": True
+            })
 
-    '''
-  @TODO: 
-  Create an endpoint to DELETE question using a question ID. 
+        except:
+            abort(500)
 
-  TEST: When you click the trash icon next to a question, the question will be removed.
-  This removal will persist in the database and when you refresh the page. 
-  '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 404,
+            "message": "Sorry, we couldn't found what you are looking for"
+        }), 404
+
+    @app.errorhandler(500)
+    def server_error(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "It's not you, it's us"
+        }), 500
+
+    @app.route('/questions', methods=["POST"])
+    def create_question():
+        try:
+            body = request.get_json()
+
+            question = body.get('question', None)
+            answer = body.get('answer', None)
+            category = body.get('category', None)
+            difficulty = body.get('difficulty', None)
+
+            question = Question(question=question, answer=answer,
+                                category=category, difficulty=difficulty)
+            question.insert()
+            return jsonify({
+                "success": True
+            })
+        except:
+            abort(500)
 
     '''
   @TODO: 
