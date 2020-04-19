@@ -5,8 +5,8 @@ from wtforms.validators import DataRequired, AnyOf, URL
 
 
 class ShowForm(Form):
-    artist_id = StringField("artist_id")
-    venue_id = StringField("venue_id")
+    artist_id = StringField("artist_id", validators=[DataRequired()])
+    venue_id = StringField("venue_id", validators=[DataRequired()])
     start_time = DateTimeField(
         "start_time", validators=[DataRequired()], default=datetime.today()
     )
@@ -94,14 +94,14 @@ class VenueForm(Form):
         ],
     )
     address = StringField("address", validators=[DataRequired()])
-    phone = StringField("phone")
-    image_link = StringField("image_link")
+    phone = StringField("phone", validators=[DataRequired()])
+    image_link = StringField("image_link", validators=[DataRequired()])
     genres = SelectMultipleField(
         "genres",
         validators=[DataRequired(), AnyOf(genresChoices)],
         choices=genresChoices,
     )
-    facebook_link = StringField("facebook_link", validators=[URL()])
+    facebook_link = StringField("facebook_link", validators=[URL(), DataRequired()])
 
 
 class ArtistForm(Form):
@@ -185,15 +185,12 @@ class ArtistForm(Form):
             ("WY", "WY"),
         ],
     )
-    phone = StringField("phone")
-    image_link = StringField("image_link")
+    phone = StringField("phone", validators=[DataRequired()])
+    image_link = StringField("image_link", validators=[DataRequired()])
     genres = SelectMultipleField(
         "genres",
         validators=[DataRequired(), AnyOf(genresChoices)],
         choices=genresChoices,
     )
-    facebook_link = StringField(
-        "facebook_link",
-        validators=[URL()],
-    )
+    facebook_link = StringField("facebook_link", validators=[URL(), DataRequired()])
 

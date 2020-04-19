@@ -9,9 +9,8 @@
 			<a style="margin-left: 10px" href='/artists/{{ artist.id }}/edit'>Edit artist</a>
 		</p>
 		<div class="genres">
-			{% for genre in artist.genres %}
-			<span class="genre">{{ genre }}</span>
-			{% endfor %}
+			{% for genre in artist.genres %} {% if genre != '{' and genre != '}' %}
+			<span class="genre">{{ genre }}</span> {%endif%} {% endfor %}
 		</div>
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ artist.city }}, {{ artist.state }}
