@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------#
 
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy import func, text, update
+from sqlalchemy import func, text, update, or_
 import dateutil.parser
 import babel
 from flask import (
@@ -163,11 +163,18 @@ def venues():
     return render_template("pages/venues.html", areas=data)
 
 
+# Find venue by name, city, state
 @app.route("/venues/search", methods=["POST"])
 def search_venues():
     searchTerm = request.form.get("search_term", "")
     search = "%{}%".format(searchTerm)
-    data = Venue.query.filter(Venue.name.ilike(search)).all()
+    data = Venue.query.filter(
+        or_(
+            Venue.name.ilike(search),
+            Venue.city.ilike(search),
+            Venue.state.ilike(search),
+        )
+    ).all()
     count = len(data)
     response = {"count": count, "data": data}
 
@@ -276,12 +283,18 @@ def artists():
 
     return render_template("pages/artists.html", artists=artists)
 
-
+# Find artist by name, city, state
 @app.route("/artists/search", methods=["POST"])
 def search_artists():
     searchTerm = request.form.get("search_term", "")
     search = "%{}%".format(searchTerm)
-    data = Artist.query.filter(Artist.name.ilike(search)).all()
+    data = Artist.query.filter(
+        or_(
+            Artist.name.ilike(search),
+            Artist.city.ilike(search),
+            Artist.state.ilike(search),
+        )
+    ).all()
     count = len(data)
     response = {"count": count, "data": data}
 
