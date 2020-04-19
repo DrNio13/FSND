@@ -51,7 +51,7 @@ def create_app(test_config=None):
             "questions": formatted_questions[start:end],
             "total_questions": len(formatted_questions),
             "categories": list(categories),
-            # "current_category": "history" TODO fix it
+            "current_category": None
         })
 
     def get_category_type(id):
@@ -92,6 +92,22 @@ def create_app(test_config=None):
             "message": "It's not you, it's us"
         }), 500
 
+    @app.errorhandler(422)
+    def unable_to_process(error):
+        return jsonify({
+            "success": False,
+            "error": 422,
+            "message": "Your request is well-formed, however, due to semantic errors it is unable to be processed"
+        }), 422
+
+    @app.errorhandler(401)
+    def unauthorized(error):
+        return jsonify({
+            "success": False,
+            "error": 401,
+            "message": "Oops...unauthorized error"
+        }), 401
+
     @app.route('/questions', methods=["POST"])
     def create_question():
         try:
@@ -110,17 +126,6 @@ def create_app(test_config=None):
             })
         except:
             abort(500)
-
-    '''
-  @TODO: 
-  Create an endpoint to POST a new question, 
-  which will require the question and answer text, 
-  category, and difficulty score.
-
-  TEST: When you submit a question on the "Add" tab, 
-  the form will clear and the question will appear at the end of the last page
-  of the questions list in the "List" tab.  
-  '''
 
     '''
   @TODO: 
@@ -152,12 +157,6 @@ def create_app(test_config=None):
   TEST: In the "Play" tab, after a user selects "All" or a category,
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
-  '''
-
-    '''
-  @TODO: 
-  Create error handlers for all expected errors 
-  including 404 and 422. 
   '''
 
     return app
