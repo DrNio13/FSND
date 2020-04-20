@@ -3,6 +3,7 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
+from sqlalchemy.sql.expression import func, select
 
 from models import setup_db, Question, Category, db
 
@@ -168,6 +169,36 @@ def create_app(test_config=None):
                 "total_questions": len(all_questions),
                 "current_category": category_type
             })
+        except Exception as e:
+            print(e)
+            abort(500)
+
+    @app.route('/quizzes', methods=["POST"])
+    def get_quizz_question():
+        try:
+            body = request.get_json()
+            previous_questions = body.get("previous_questions")
+            category = body.get("quiz_category")
+            if (previous_questions == None):
+                abort(400)
+            if (category == None):
+                abort(400)
+
+            category_id = category['id']
+            if (category['id'] == 0):
+                category_id = random.randint(1, 6)
+
+            random_question = random.choice(
+                Question.query.filter(Question.category == category_id).all())
+            tries = 0
+            max_tries = 100
+            while ((random_question.id in previous_questions) or (tries > max_tries)):
+                random_question = random.choice(Question.query.all())
+                tries += 1
+            else:
+                return jsonify({
+                    "question": random_question.format()
+                })
         except Exception as e:
             print(e)
             abort(500)
