@@ -15,7 +15,7 @@ def create_app(test_config=None):
     CORS(app, resources=r'/api/*')
 
     @app.route("/")
-    def index():
+    def get_status():
         return jsonify({"status": True})
 
     @app.after_request
@@ -105,7 +105,7 @@ def create_app(test_config=None):
         return jsonify({
             "success": False,
             "error": 401,
-            "message": "Oops...unauthorized error"
+            "message": "Oops...you are not authorized to do that"
         }), 401
 
     @app.route('/questions', methods=["POST"])
@@ -127,25 +127,50 @@ def create_app(test_config=None):
         except:
             abort(500)
 
-    '''
-  @TODO: 
-  Create a POST endpoint to get questions based on a search term. 
-  It should return any questions for whom the search term 
-  is a substring of the question. 
+    @app.route('/search/questions', methods=["POST"])
+    def search_question():
+        try:
+            body = request.get_json()
 
-  TEST: Search by any phrase. The questions list will update to include 
-  only question that include that string within their question. 
-  Try using the word "title" to start. 
-  '''
+            searchTerm = body.get('searchTerm', '')
+            print(searchTerm)
+            if (searchTerm == ''):
+                abort(400)
 
-    '''
-  @TODO: 
-  Create a GET endpoint to get questions based on category. 
+            search = "%{}%".format(searchTerm)
+            all_questions = Question.query.all()
+            questions_found = Question.query.filter(
+                Question.question.ilike(search))
+            questions_found_formatted = [
+                question.format() for question in questions_found]
 
-  TEST: In the "List" tab / main screen, clicking on one of the 
-  categories in the left column will cause only questions of that 
-  category to be shown. 
-  '''
+            return jsonify({
+                "questions": questions_found_formatted,
+                "total_questions": len(all_questions),
+                "current_category": None
+            })
+        except:
+            abort(500)
+
+    @app.route('/categories/<int:id>/questions')
+    def get_question_by_category_id(id):
+        try:
+            if(id < 0):
+                abort(400)
+            category_type = get_category_type(id)
+            all_questions = Question.query.all()
+            questions = Question.query.filter(
+                Question.category == id).all()
+            questions_formatted = [question.format() for question in questions]
+
+            return jsonify({
+                "questions": questions_formatted,
+                "total_questions": len(all_questions),
+                "current_category": category_type
+            })
+        except Exception as e:
+            print(e)
+            abort(500)
 
     '''
   @TODO: 
