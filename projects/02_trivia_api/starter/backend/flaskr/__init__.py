@@ -20,7 +20,7 @@ def create_app(test_config=None):
         return jsonify({"status": True})
 
     @app.after_request
-    def after_equest(response):
+    def after_request(response):
         response.headers.add("Access-Control-Allow-Headers",
                              "Content-Type, Authorization")
         response.headers.add("Access-Control-Allow-Methods",
@@ -39,6 +39,8 @@ def create_app(test_config=None):
     @app.route("/questions")
     def get_questions():
         page = request.args.get("page", 1, type=int)
+        if (page <= 0):
+            abort(400)
         start = (page - 1) * 10
         end = start + 10
         questions = Question.query.all()
@@ -109,6 +111,14 @@ def create_app(test_config=None):
             "message": "Oops...you are not authorized to do that"
         }), 401
 
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "Sorry, this time it is you"
+        }), 400
+
     @app.route('/questions', methods=["POST"])
     def create_question():
         try:
@@ -134,8 +144,7 @@ def create_app(test_config=None):
             body = request.get_json()
 
             searchTerm = body.get('searchTerm', '')
-            print(searchTerm)
-            if (searchTerm == ''):
+            if (searchTerm is None or searchTerm == ''):
                 abort(400)
 
             search = "%{}%".format(searchTerm)
@@ -151,7 +160,7 @@ def create_app(test_config=None):
                 "current_category": None
             })
         except:
-            abort(500)
+            abort(400)
 
     @app.route('/categories/<int:id>/questions')
     def get_question_by_category_id(id):
