@@ -48,14 +48,14 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/questions&page=0')
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 404)
 
     def test_delete(self):
-        res = self.client().delete("/questions/1")
+        res = self.client().delete("/questions/5")
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data["success"], 200)
+        self.assertEqual(data["success"], True)
 
     def test_create_question(self):
         res = self.client().post('/questions',
@@ -90,24 +90,24 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
 
     def test_400_get_question_by_category_id(self):
-        res = self.client().get("/categories/0/questions")
+        res = self.client().get("/categories/-1/questions")
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 404)
 
     def test_get_quizz_question(self):
         res = self.client().post('/quizzes',
-                                 json={"previous_questions": "[]", "quiz_category": {"type": "Geography", "id": 3}})
+                                 json={"previous_questions": [], "quiz_category": {"type": "Sports", "id": 6}})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
 
-    def test_cget_quizz_question(self):
+    def test_error_get_quizz_question(self):
         res = self.client().post('/quizzes',
-                                 json={"previous_questions": "[]", "quiz_category": None})
+                                 json={"previous_questions": [], "quiz_category": {"type": "Sports", "id": -1}})
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 500)
 
 
 # Make the tests conveniently executable
