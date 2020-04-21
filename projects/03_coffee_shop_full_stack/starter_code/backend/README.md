@@ -69,9 +69,18 @@ The `--reload` flag will detect file changes and restart the server automaticall
         - can `get:drinks-detail`
     - Manager
         - can perform all actions
+
+        https://drnio13.eu.auth0.com/authorize?audience=drink&response_type=token&client_id=YG3fEQiptY6uEYx2h0vSCTKhrxk5IuPi&redirect_uri=https://127.0.0.1:5000/login-results
+
+
 7. Test your endpoints with [Postman](https://getpostman.com). 
     - Register 2 users - assign the Barista role to one and Manager role to the other.
     - Sign into each account and make note of the JWT.
+        1user 
+        eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJqazVOVVpDTVVJNVJVWkNORFJETWpORlFURkRRa0UxUkRJNE1VVXpPRVV5TXpKRk1qSTNSZyJ9.eyJpc3MiOiJodHRwczovL2RybmlvMTMuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlOWYwM2NkNjQ3YmViMGM3YmIxM2M4MSIsImF1ZCI6ImRyaW5rIiwiaWF0IjoxNTg3NDkwNDE5LCJleHAiOjE1ODc0OTc2MTksImF6cCI6IllHM2ZFUWlwdFk2dUVZeDJoMHZTQ1RLaHJ4azVJdVBpIiwic2NvcGUiOiIiLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6ZHJpbmtzIiwiZ2V0OmRyaW5rLWRldGFpbHMiLCJwYXRjaDpkcmlua3MiLCJwb3N0OmRyaW5rcyJdfQ.IfafkvXzjp9Gc5yjR3tzfgWFny0vjhz3mciklNL-03ClSPUBcCik_Y1xegOgwmNab3xYH-DDvradfLEjedgDXHaAyg_yCQAcPkSA5GzzZGaSarCQKjErcEfHslWTXIQD6fWYEGSWqXMPL_bBBZJsB-uAvr7mMeJ-816Rt6bC-Edbmt9ktVSHPGqYpfKM3h458t9ttKcKD_1y3SlBIYDsG-Nb35ji7xETi6utm23zpxBk12oV513QyFOpCzbmZ7J_w7Dr7fkJtXIolz88W0q_CR8L-Jw9fQ-AaWfX4rJKVl4UMCpxXrZoXFkovQzRZ-U-rGKMzqza7wuL7Vb8PVGBNw
+
+        2user eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJqazVOVVpDTVVJNVJVWkNORFJETWpORlFURkRRa0UxUkRJNE1VVXpPRVV5TXpKRk1qSTNSZyJ9.eyJpc3MiOiJodHRwczovL2RybmlvMTMuZXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlOWYwNDI2NjQ3YmViMGM3YmIxM2NmZiIsImF1ZCI6ImRyaW5rIiwiaWF0IjoxNTg3NDkwOTMyLCJleHAiOjE1ODc0OTgxMzIsImF6cCI6IllHM2ZFUWlwdFk2dUVZeDJoMHZTQ1RLaHJ4azVJdVBpIiwic2NvcGUiOiIiLCJwZXJtaXNzaW9ucyI6WyJnZXQ6ZHJpbmstZGV0YWlscyJdfQ.VubaCohGrghSjCdwgLexr-yzBPoWDksqHMgK_a2RFM7cGCEkyXiEa7XuSAQteFe3kjbQJsOWfrfBj-3XTGd5jIq8b2QZTeKV46agOMr5hA9gfycDX6HtfGnFtaScaWnOyykfZdw5BIe1UrJErZiRl1RU8YcGzRqBz_RdTf2UJcU44TBvF4s5Uuu578pyri-OiiwPeiXeHZ4MOq1Gusq85Vp1jqRgj07dpxfw2y--dfnHL4uIS7t-dLyKg4acnPBCleJsoOf0Do_KcKfI-HMtCNteOTQ2CK-vhjxxaqnGEzrDNrDKb4EGRQEwgWQnRcHZXfD5G7mFih4tbH4lj8fAqA 
+
     - Import the postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
     - Right-clicking the collection folder for barista and manager, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).
     - Run the collection and correct any errors.
