@@ -42,18 +42,29 @@ def get_drinks():
 @app.route("/drinks-detail")
 @requires_auth('get:drink-details')
 def get_drinks_detail(jwt):
-    try:
-        print(jwt)
-        drinks = Drink.query.all()
-        long_drinks = [drink.long() for drink in drinks]
+    drinks = Drink.query.all()
+    long_drinks = [drink.long() for drink in drinks]
 
-        return jsonify({
-            "success": True,
-            "drinks": long_drinks
-        })
-    except Exception as e:
-        print(e)
-        abort(500)
+    return jsonify({
+        "success": True,
+        "drinks": long_drinks
+    })
+
+
+@app.route("/drinks", methods=["POST"])
+@requires_auth('post:drinks')
+def create_drink(jwt):
+    body = request.get_json()
+    title = body.get("title")
+    recipe = body.get("recipe")
+    drink = Drink(title=title, recipe=[{"color": recipe["color"], "name": recipe["name"],
+                                        "parts": recipe["parts"]}])
+    drink.insert()
+
+    return jsonify({
+        "success": True,
+        "drinks": drink.long()
+    })
 
 
 '''
