@@ -57,8 +57,8 @@ def create_drink(jwt):
     body = request.get_json()
     title = body.get("title")
     recipe = body.get("recipe")
-    drink = Drink(title=title, recipe=[{"color": recipe["color"], "name": recipe["name"],
-                                        "parts": recipe["parts"]}])
+    print(recipe)
+    drink = Drink(title=title, recipe=json.dumps(recipe))
     drink.insert()
 
     return jsonify({
@@ -145,5 +145,5 @@ def bad_request(error):
 
 '''
 @TODO implement error handler for AuthError
-    error handler should conform to general task above 
+    error handler should conform to general task above
 '''
