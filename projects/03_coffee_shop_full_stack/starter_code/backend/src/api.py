@@ -27,11 +27,13 @@ def get_status():
 def get_drinks():
     try:
         drinks = Drink.query.all()
-        short_drinks = [drink.short() for drink in drinks]
-
+        drinks_formatted = [drink.long() for drink in drinks]
+        # short() method contains a strange exception
+        # string indices must be integers
+        # i asked for help for the instructors and I couldn't find any solution
         return jsonify({
             "success": True,
-            "drinks": short_drinks
+            "drinks": drinks_formatted
         })
     except Exception as e:
         print(e)
