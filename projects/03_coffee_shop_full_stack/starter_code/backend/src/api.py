@@ -72,14 +72,24 @@ def create_drink(jwt):
 @requires_auth('patch:drinks')
 def update_drink_title(jwt, id):
     if id == None or id <= 0:
-        abort(404)
+        return json.dumps({
+            'success':
+                False,
+                'error':
+                'Invalid id #' + id
+        }), 404
 
     body = request.get_json()
     title = body.get("title")
 
     drink = Drink.query.filter(Drink.id == id).one_or_none()
     if (drink is None):
-        abort(404)
+        return json.dumps({
+            'success':
+                False,
+                'error':
+                'Drink #' + id + ' not found to be edited'
+        }), 404
 
     drink.title = title
     drink.update()
