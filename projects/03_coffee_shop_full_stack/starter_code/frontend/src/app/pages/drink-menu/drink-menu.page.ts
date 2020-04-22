@@ -16,13 +16,14 @@ export class DrinkMenuPage implements OnInit {
     private auth: AuthService,
     private modalCtrl: ModalController,
     public drinks: DrinksService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.drinks.getDrinks();
   }
 
   async openForm(activedrink: Drink = null) {
+
     if (!this.auth.can('get:drinks-detail')) {
       return;
     }

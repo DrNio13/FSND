@@ -39,7 +39,7 @@ def get_drinks():
 
 
 @app.route("/drinks-detail")
-@requires_auth('get:drink-details')
+@requires_auth('get:drinks-detail')
 def get_drinks_detail(jwt):
     drinks = Drink.query.all()
     long_drinks = [drink.long() for drink in drinks]
