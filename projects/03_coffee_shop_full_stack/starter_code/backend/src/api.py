@@ -71,12 +71,12 @@ def create_drink(jwt):
 @app.route("/drinks/<int:id>", methods=["PATCH"])
 @requires_auth('patch:drinks')
 def update_drink_title(jwt, id):
-    if id == None or id <= 0:
+    if id is None or id <= 0:
         return json.dumps({
             'success':
                 False,
                 'error':
-                'Invalid id #' + id
+                'Invalid id #' + str(id)
         }), 404
 
     body = request.get_json()
@@ -88,7 +88,7 @@ def update_drink_title(jwt, id):
             'success':
                 False,
                 'error':
-                'Drink #' + id + ' not found to be edited'
+                'Drink #' + str(id) + ' not found to be edited'
         }), 404
 
     drink.title = title
@@ -103,12 +103,22 @@ def update_drink_title(jwt, id):
 @app.route("/drinks/<int:id>", methods=["DELETE"])
 @requires_auth('delete:drinks')
 def delete_drink_by_id(jwt, id):
-    if id == None or id <= 0:
-        abort(404)
+    if id is None or id <= 0:
+        return json.dumps({
+            'success':
+                False,
+                'error':
+                'Invalid id #' + str(id)
+        }), 404
 
     drink = Drink.query.filter(Drink.id == id).one_or_none()
     if (drink is None):
-        abort(404)
+        return json.dumps({
+            'success':
+                False,
+                'error':
+                'Drink #' + str(id) + ' not found to be edited'
+        }), 404
 
     drink.delete()
 
@@ -147,15 +157,6 @@ def not_found(error):
         "error": 404,
         "message": "Sorry, we couldn't find what you were looking for"
     }), 404
-
-
-@app.errorhandler(400)
-def bad_request(error):
-    return jsonify({
-        "success": False,
-        "error": 400,
-        "message": "Bad request"
-    }), 400
 
 
 @app.errorhandler(AuthError)
